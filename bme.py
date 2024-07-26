@@ -12,7 +12,7 @@ hour = str(now.hour)
 minute = str(now.minute)
 seconds = str(now.second)
 ts = year + "/" + month + "/" + day + " " + hour + ":" + minute + ":" + seconds
-filename1 = "data/Sensor_Data_"+ year + "_" + month + "_" + day + "_" + hour + "_" + minute + "_" + seconds  + ".csv"
+filename1 = "/data/Sensor_Data_"+ year + "_" + month + "_" + day + "_" + hour + "_" + minute + "_" + seconds  + ".csv"
 
 # BME280 sensor address (default address)
 address = 0x76
