@@ -1,18 +1,12 @@
 from datetime import datetime
-import time
-import smbus2
-import bme280
+import time, smbus2, bme280, os
+# Fetch hostname
+host = os.uname()[1]
 
-# Initialize with current date/time and build logger filename
+# Initialize with current date/time, hostname, paths, and build logger filename
 now = datetime.now()
-year = str(now.year)
-month = str(now.month)
-day = str(now.day)
-hour = str(now.hour)
-minute = str(now.minute)
-seconds = str(now.second)
-ts = year + "/" + month + "/" + day + " " + hour + ":" + minute + ":" + seconds
-filename1 = "/data/Sensor_Data_"+ year + "_" + month + "_" + day + "_" + hour + "_" + minute + "_" + seconds  + ".csv"
+ts = now.strftime("%Y-%m-%d %H:%M:%S")
+filename = "/bme280/data/sd_" + host + "_" + now.strftime("%Y-%m-%d_%Hh%Mm%Ss") + ".csv"
 
 # BME280 sensor address (default address)
 address = 0x76
@@ -23,21 +17,15 @@ bus = smbus2.SMBus(2)
 # Load calibration parameters
 calibration_params = bme280.load_calibration_params(bus, address)
 
-# Create data file with headers
-f = open(filename1, 'a+')
+# Create data file with column headers
+f = open(filename, 'a+')
 f.write('ts, temp, humidity, pressure\n');
 f.close
 
 while True:
     try:
         now = datetime.now()
-        year = str(now.year)
-        month = str(now.month)
-        day = str(now.day)
-        hour = str(now.hour)
-        minute = str(now.minute)
-        seconds = str(now.second)
-        ts = year + "/" + month + "/" + day + " " + hour + ":" + minute + ":" + seconds
+        ts = now.strftime("%Y-%m-%d %H:%M:%S")
         # Read sensor data
         data = bme280.sample(bus, address, calibration_params)
         # Extract temperature, pressure, and humidity
@@ -47,17 +35,18 @@ while True:
         pressure = str(pressure)
         humidity = round(data.humidity,1)
 
-        # Build output data
+        # Build output data string
         data = ts, temperature, humidity, pressure
         output = str(data)
+        # Remove extraneous parentheses
         output = output.replace("(","")
         output = output.replace(")","")
 
         # Write data to sensor_data.csv
-        f = open(filename1, 'a+')
+        f = open(filename, 'a+')
         f.write(output + "\n")
         f.close()
-
+        del now, ts
         # Wait for a few seconds before the next reading
         time.sleep(60)
 
