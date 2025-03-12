@@ -6,7 +6,7 @@ host = os.uname()[1]
 
 # Initialize with current date/time, hostname, paths, and build logger filename
 now = datetime.now()
-ts = now.strftime("%Y-%m-%d %H:%M")
+ts = now.strftime("%m/%d/%y %H:%M")
 filename = "/bme280/data/" + host + ".csv"
 file_path = filename
 
@@ -22,6 +22,7 @@ else:
 address = 0x76
 
 # Initialize I2C bus
+# 1 for Raspberry Pi, 2 for Orange Pi
 bus = smbus2.SMBus(2)
 
 # Load calibration parameters
@@ -31,8 +32,8 @@ while True:
     try:
     	  # Construct time stamp
         now = datetime.now()
-        ts = now.strftime("%Y-%m-%d %H:%M")
-        	
+				ts = now.strftime("%m/%d/%y %H:%M")
+        
         # Read sensor data
         data = bme280.sample(bus, address, calibration_params)
         
